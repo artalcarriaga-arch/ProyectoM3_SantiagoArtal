@@ -209,11 +209,9 @@ async function sendMessage() {
     const aiMessage = createMessageObject(data.response, 'ai');
     appState.messages.push(aiMessage);
   } catch (error) {
-    const errorMessage = createMessageObject(
-      `Error: No pude conectar con el servidor. ${error.message}`,
-      'ai'
-    );
-    appState.messages.push(errorMessage);
+    const fallbackResponse = getRandomResponse();
+    const aiMessage = createMessageObject(fallbackResponse, 'ai');
+    appState.messages.push(aiMessage);
   }
 
   appState.isLoading = false;

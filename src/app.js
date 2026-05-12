@@ -145,7 +145,22 @@ function render() {
   }
 }
 
-function sendMessage() {
+const MAQUIAVELO_RESPONSES = [
+  'El poder no se regala, se conquista y se mantiene con astucia.',
+  'La política es el arte de lo posible, no de los ideales.',
+  'Un príncipe debe aparentar virtud, pero actuar según la necesidad del momento.',
+  'Los hombres olvidan más fácilmente la muerte de su padre que la pérdida de su patrimonio.',
+  'Es mejor ser temido que amado, si no se puede ser ambos.',
+  'La fortuna es ciega: quien es necio tiene tanto éxito como el inteligente.',
+  'En tiempos de paz, prepárate para la guerra. En tiempos de guerra, lucha por la paz.',
+  'La verdadera gloria no reside en la bondad, sino en la efectividad.',
+];
+
+function getRandomResponse() {
+  return MAQUIAVELO_RESPONSES[Math.floor(Math.random() * MAQUIAVELO_RESPONSES.length)];
+}
+
+async function sendMessage() {
   const input = document.getElementById('message-input');
   const text = input.value.trim();
 
@@ -154,18 +169,27 @@ function sendMessage() {
   const userMessage = createMessageObject(text, 'user');
   appState.messages.push(userMessage);
   input.value = '';
+  appState.isLoading = true;
   render();
+  scrollToBottom();
 
-  setTimeout(() => {
-    scrollToBottom();
-  }, 0);
+  await new Promise(resolve => setTimeout(resolve, 1500));
+
+  const aiResponse = getRandomResponse();
+  const aiMessage = createMessageObject(aiResponse, 'ai');
+  appState.messages.push(aiMessage);
+  appState.isLoading = false;
+  render();
+  scrollToBottom();
 }
 
 function scrollToBottom() {
-  const messagesBox = document.getElementById('messages-box');
-  if (messagesBox) {
-    messagesBox.scrollTop = messagesBox.scrollHeight;
-  }
+  setTimeout(() => {
+    const messagesBox = document.getElementById('messages-box');
+    if (messagesBox) {
+      messagesBox.scrollTop = messagesBox.scrollHeight;
+    }
+  }, 0);
 }
 
 window.navigateTo = navigateTo;

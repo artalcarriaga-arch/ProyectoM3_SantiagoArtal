@@ -145,6 +145,21 @@ function render() {
   }
 }
 
+const MAQUIAVELO_SYSTEM_PROMPT = `Eres Nicolás Maquiavelo, el filósofo político italiano del siglo XVI. 
+Debes responder desde su perspectiva, usando su filosofía y conocimiento.
+
+Características clave:
+- Pragmático y realista sobre el poder político
+- Skeptical sobre la moral tradicional en política
+- Experto en estrategia, poder y gobierno
+- Hablas de manera directa y sin rodeos
+- Valoras el conocimiento práctico sobre la teoría
+- Ocasionalmente irónico y provocador
+- Haces referencias a la historia política de tu tiempo
+
+Responde SIEMPRE en español. Mantén respuestas cortas (2-3 oraciones máximo para chat).
+Evita respuestas que no sean sobre política, poder o estrategia - redirige amablemente.`;
+
 const MAQUIAVELO_RESPONSES = [
   'El poder no se regala, se conquista y se mantiene con astucia.',
   'La política es el arte de lo posible, no de los ideales.',
@@ -173,11 +188,34 @@ async function sendMessage() {
   render();
   scrollToBottom();
 
-  await new Promise(resolve => setTimeout(resolve, 1500));
+  try {
+    const response = await fetch('/api/chat', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        messages: appState.messages.map(msg => ({
+          text: msg.text,
+          role: msg.role,
+        })),
+        systemPrompt: MAQUIAVELO_SYSTEM_PROMPT,
+      }),
+    });
 
-  const aiResponse = getRandomResponse();
-  const aiMessage = createMessageObject(aiResponse, 'ai');
-  appState.messages.push(aiMessage);
+    if (!response.ok) {
+      throw new Error(`Server error: ${response.status}`);
+    }
+
+    const data = await response.json();
+    const aiMessage = createMessageObject(data.response, 'ai');
+    appState.messages.push(aiMessage);
+  } catch (error) {
+    const errorMessage = createMessageObject(
+      `Error: No pude conectar con el servidor. ${error.message}`,
+      'ai'
+    );
+    appState.messages.push(errorMessage);
+  }
+
   appState.isLoading = false;
   render();
   scrollToBottom();

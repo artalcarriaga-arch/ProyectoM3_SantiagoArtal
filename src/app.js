@@ -202,16 +202,20 @@ async function sendMessage() {
     });
 
     if (!response.ok) {
-      throw new Error(`Server error: ${response.status}`);
+      const errorData = await response.json().catch(() => ({}));
+      throw new Error(`Server error: ${response.status} - ${errorData.error || 'Unknown'}`);
     }
 
     const data = await response.json();
     const aiMessage = createMessageObject(data.response, 'ai');
     appState.messages.push(aiMessage);
   } catch (error) {
-    const fallbackResponse = getRandomResponse();
-    const aiMessage = createMessageObject(fallbackResponse, 'ai');
-    appState.messages.push(aiMessage);
+    console.error('Chat error:', error);
+    const errorMessage = createMessageObject(
+      `Error: ${error.message}`,
+      'ai'
+    );
+    appState.messages.push(errorMessage);
   }
 
   appState.isLoading = false;

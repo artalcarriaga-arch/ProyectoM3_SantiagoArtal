@@ -203,7 +203,8 @@ async function sendMessage() {
 
     if (!response.ok) {
       const errorData = await response.json().catch(() => ({}));
-      throw new Error(`Server error: ${response.status} - ${errorData.error || 'Unknown'}`);
+      const errorDetails = `${response.status} - ${errorData.message || errorData.error || 'Unknown error'}${errorData.type ? ` (${errorData.type})` : ''}`;
+      throw new Error(`Server error: ${errorDetails}`);
     }
 
     const data = await response.json();

@@ -1,4 +1,4 @@
-import { createMessageObject, escapeHtml } from './utils.js';
+import { createMessageObject, escapeHtml, saveMessagesToLocalStorage, loadMessagesFromLocalStorage, clearMessagesFromLocalStorage } from './utils.js';
 
 const appState = {
   currentRoute: '/home',
@@ -73,6 +73,15 @@ function renderChat() {
             ${appState.isLoading ? 'disabled' : ''}
           >
             Enviar
+          </button>
+          <button 
+            id="clear-history-button" 
+            class="btn-secondary"
+            onclick="clearHistory()" 
+            ${appState.isLoading ? 'disabled' : ''}
+            title="Limpiar historial de conversación"
+          >
+            Limpiar
           </button>
         </div>
       </div>
@@ -220,6 +229,7 @@ async function sendMessage() {
   }
 
   appState.isLoading = false;
+  saveMessagesToLocalStorage(appState.messages);
   render();
   scrollToBottom();
 }
@@ -233,13 +243,25 @@ function scrollToBottom() {
   }, 0);
 }
 
+function clearHistory() {
+  if (confirm('¿Estás seguro de que deseas limpiar todo el historial de conversación?')) {
+    appState.messages = [];
+    clearMessagesFromLocalStorage();
+    render();
+  }
+}
+
 window.navigateTo = navigateTo;
 window.sendMessage = sendMessage;
+window.clearHistory = clearHistory;
 
 window.addEventListener('popstate', e => {
   const path = e.state?.path || '/home';
   appState.currentRoute = path;
   render();
 });
+
+// Load chat history from localStorage on app start
+appState.messages = loadMessagesFromLocalStorage();
 
 render();

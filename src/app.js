@@ -143,7 +143,11 @@ function render() {
       const input = document.getElementById('message-input');
       if (input) {
         input.focus();
-        input.addEventListener('keypress', e => {
+        // Remover listeners previos para evitar duplicados
+        const newInput = input.cloneNode(true);
+        input.parentNode.replaceChild(newInput, input);
+        
+        newInput.addEventListener('keypress', e => {
           if (e.key === 'Enter' && !appState.isLoading) {
             sendMessage();
           }
@@ -153,20 +157,7 @@ function render() {
   }
 }
 
-const MAQUIAVELO_SYSTEM_PROMPT = `Eres Nicolás Maquiavelo, el filósofo político italiano del siglo XVI. 
-Debes responder desde su perspectiva, usando su filosofía y conocimiento.
-
-Características clave:
-- Pragmático y realista sobre el poder político
-- Skeptical sobre la moral tradicional en política
-- Experto en estrategia, poder y gobierno
-- Hablas de manera directa y sin rodeos
-- Valoras el conocimiento práctico sobre la teoría
-- Ocasionalmente irónico y provocador
-- Haces referencias a la historia política de tu tiempo
-
-Responde SIEMPRE en español. Mantén respuestas cortas (2-3 oraciones máximo para chat).
-Evita respuestas que no sean sobre política, poder o estrategia - redirige amablemente.`;
+const MAQUIAVELO_SYSTEM_PROMPT = `Eres Nicolás Maquiavelo. Responde en español sobre política y poder. Sé directo, pragmático y realista. Máximo 2 oraciones.`;
 
 const MAQUIAVELO_RESPONSES = [
   'El poder no se regala, se conquista y se mantiene con astucia.',
@@ -197,14 +188,17 @@ async function sendMessage() {
   scrollToBottom();
 
   try {
+    // Enviar SOLO el último mensaje para economizar tokens
     const response = await fetch('/api/chat', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        messages: appState.messages.map(msg => ({
-          text: msg.text,
-          role: msg.role,
-        })),
+        messages: [
+          {
+            text: text,
+            role: 'user',
+          }
+        ],
         systemPrompt: MAQUIAVELO_SYSTEM_PROMPT,
       }),
     });

@@ -61,17 +61,6 @@ ProyectoM3_SantiagoArtal/
 ├── tests/
 │   ├── app.test.js         # Tests de app
 │   └── utils.test.js       # Tests de utils (11 tests)
-├── DOCUMENTACION_PRIVADA/  # Notas de desarrollo
-│   ├── 00-SETUP.md
-│   ├── 01-ESTRUCTURA-HTML-CSS.md
-│   ├── 02-INSTALAR-NPM-Y-APP-JS.md
-│   ├── 03-CHAT-DATOS-EN-MEMORIA.md
-│   ├── 04-VERCEL-SERVERLESS-FUNCTION.md
-│   ├── 05-CONECTAR-FRONTEND-CON-API.md
-│   ├── 06-TESTS-UNITARIOS-VITEST.md
-│   ├── 07-DEPLOY-VERCEL.md
-│   ├── 08-GEMINI-PRODUCTION-DEBUGGING.md
-│   └── 09-REGISTRO-DEL-DIA.md
 ├── package.json
 ├── vite.config.js
 ├── vitest.config.js
@@ -195,20 +184,6 @@ Responde SIEMPRE en español. Mantén respuestas cortas (2-3 oraciones máximo p
 npx vite --port 3000
 ```
 
-## 📚 Documentación Detallada
-
-Para aprender cómo se construyó paso a paso, consulta:
-
-- **[00-SETUP.md](DOCUMENTACION_PRIVADA/00-SETUP.md)** - Configuración inicial
-- **[01-ESTRUCTURA-HTML-CSS.md](DOCUMENTACION_PRIVADA/01-ESTRUCTURA-HTML-CSS.md)** - Design responsive
-- **[02-INSTALAR-NPM-Y-APP-JS.md](DOCUMENTACION_PRIVADA/02-INSTALAR-NPM-Y-APP-JS.md)** - Routing SPA
-- **[03-CHAT-DATOS-EN-MEMORIA.md](DOCUMENTACION_PRIVADA/03-CHAT-DATOS-EN-MEMORIA.md)** - State & async
-- **[04-VERCEL-SERVERLESS-FUNCTION.md](DOCUMENTACION_PRIVADA/04-VERCEL-SERVERLESS-FUNCTION.md)** - Backend
-- **[05-CONECTAR-FRONTEND-CON-API.md](DOCUMENTACION_PRIVADA/05-CONECTAR-FRONTEND-CON-API.md)** - Integración
-- **[06-TESTS-UNITARIOS-VITEST.md](DOCUMENTACION_PRIVADA/06-TESTS-UNITARIOS-VITEST.md)** - Testing
-- **[07-DEPLOY-VERCEL.md](DOCUMENTACION_PRIVADA/07-DEPLOY-VERCEL.md)** - Deployment
-- **[08-GEMINI-PRODUCTION-DEBUGGING.md](DOCUMENTACION_PRIVADA/08-GEMINI-PRODUCTION-DEBUGGING.md)** - Debugging en prod
-- **[09-REGISTRO-DEL-DIA.md](DOCUMENTACION_PRIVADA/09-REGISTRO-DEL-DIA.md)** - Log detallado del proceso
 
 ## 🔐 Seguridad
 
@@ -251,29 +226,4 @@ Para aprender cómo se construyó paso a paso, consulta:
 ## 👤 Autor
 
 Santiago Artal  
-Proyecto Integrador Módulo 3 - Coaching K  
-Mayo 2026
-
-## 📝 Licencia
-
-MIT - Libre para uso educativo y comercial
-
-## 🤝 Contribuciones
-
-Las contribuciones son bienvenidas. Para cambios importantes:
-1. Fork el proyecto
-2. Crea una rama (`git checkout -b feature/AmazingFeature`)
-3. Commit cambios (`git commit -m 'Add AmazingFeature'`)
-4. Push a rama (`git push origin feature/AmazingFeature`)
-5. Abre Pull Request
-
-## 📞 Soporte
-
-Para preguntas o issues:
-- Consulta la documentación privada en `DOCUMENTACION_PRIVADA/`
-- Revisa los logs en `DOCUMENTACION_PRIVADA/09-REGISTRO-DEL-DIA.md`
-- Verifica errores comunes en la sección Troubleshooting
-
----
-
-**Status**: ✅ Funcional en producción | ⚠️ Requiere facturación para uso continuo
+Proyecto Integrador Módulo 3 - SoyHenry

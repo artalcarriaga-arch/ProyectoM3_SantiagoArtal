@@ -52,17 +52,20 @@ export default async function handler(req, res) {
       body: JSON.stringify(requestBody)
     });
 
+    console.log(`📡 API Response Status: ${response.status}`);
+
     if (!response.ok) {
       const errorData = await response.json().catch(() => ({}));
+      console.log(`❌ API Error ${response.status}:`, errorData);
       
       // Si es error de cuota, retornar respuesta predeterminada
       if (response.status === 429) {
         const fallbackResponse = FALLBACK_RESPONSES[Math.floor(Math.random() * FALLBACK_RESPONSES.length)];
-        console.log('API quota exceeded, using fallback response');
+        console.log('⚠️ API quota exceeded, using fallback response');
         return res.status(200).json({ response: fallbackResponse });
       }
       
-      throw new Error(`API Error: ${response.status} - ${errorData.error?.message || 'Unknown error'}`);
+      throw new Error(`API Error: ${response.status} - ${JSON.stringify(errorData)}`);
     }
 
     const data = await response.json();
@@ -73,7 +76,8 @@ export default async function handler(req, res) {
     });
 
   } catch (error) {
-    console.error('Chat API Error:', error.message);
+    console.error('🔴 Chat API Error caught:', error.message);
+    console.error('Full error:', error);
     // Fallback final si hay cualquier otro error
     const FALLBACK_RESPONSES_LOCAL = [
       'El poder no se regala, se conquista y se mantiene con astucia.',

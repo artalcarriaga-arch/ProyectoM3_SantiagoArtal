@@ -25,28 +25,20 @@ export function escapeHtml(text) {
   return text.replace(/[&<>"']/g, m => map[m]);
 }
 
-export function saveMessagesToLocalStorage(messages) {
+export function saveDarkModePreference(isDarkMode) {
   try {
-    localStorage.setItem('maquiavelo_chat_history', JSON.stringify(messages));
+    localStorage.setItem('maquiavelo_dark_mode', JSON.stringify(isDarkMode));
   } catch (e) {
-    console.warn('Could not save messages to localStorage:', e);
+    console.warn('Could not save dark mode preference:', e);
   }
 }
 
-export function loadMessagesFromLocalStorage() {
+export function loadDarkModePreference() {
   try {
-    const saved = localStorage.getItem('maquiavelo_chat_history');
-    return saved ? JSON.parse(saved) : [];
+    const saved = localStorage.getItem('maquiavelo_dark_mode');
+    return saved !== null ? JSON.parse(saved) : true;
   } catch (e) {
-    console.warn('Could not load messages from localStorage:', e);
-    return [];
-  }
-}
-
-export function clearMessagesFromLocalStorage() {
-  try {
-    localStorage.removeItem('maquiavelo_chat_history');
-  } catch (e) {
-    console.warn('Could not clear localStorage:', e);
+    console.warn('Could not load dark mode preference:', e);
+    return true;
   }
 }

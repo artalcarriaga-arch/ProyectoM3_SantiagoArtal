@@ -1,9 +1,10 @@
-import { createMessageObject, escapeHtml, saveMessagesToLocalStorage, loadMessagesFromLocalStorage, clearMessagesFromLocalStorage } from './utils.js';
+import { createMessageObject, escapeHtml, formatDate, saveDarkModePreference, loadDarkModePreference } from './utils.js';
 
 const appState = {
   currentRoute: '/home',
   messages: [],
   isLoading: false,
+  darkMode: loadDarkModePreference(),
 };
 
 const routes = {
@@ -34,7 +35,11 @@ function renderChat() {
   const messagesHTML = appState.messages
     .map(msg => `
       <div class="message ${msg.role}">
-        <div class="message-content">${escapeHtml(msg.text)}</div>
+        <div class="message-wrapper">
+          <div class="message-content">${escapeHtml(msg.text)}</div>
+          <button class="copy-button" data-text="${escapeHtml(msg.text)}" onclick="copyMessage(this.dataset.text)" title="Copiar mensaje">📋</button>
+        </div>
+        <div class="message-timestamp">${formatDate(msg.timestamp)}</div>
       </div>
     `)
     .join('');
@@ -73,15 +78,6 @@ function renderChat() {
             ${appState.isLoading ? 'disabled' : ''}
           >
             Enviar
-          </button>
-          <button 
-            id="clear-history-button" 
-            class="btn-secondary"
-            onclick="clearHistory()" 
-            ${appState.isLoading ? 'disabled' : ''}
-            title="Limpiar historial de conversación"
-          >
-            Limpiar
           </button>
         </div>
       </div>
@@ -126,9 +122,12 @@ function render() {
   app.innerHTML = `
     <header>
       <nav>
-        <a href="/home" class="${appState.currentRoute === '/home' ? 'active' : ''}" onclick="event.preventDefault(); navigateTo('/home')">Inicio</a>
-        <a href="/chat" class="${appState.currentRoute === '/chat' ? 'active' : ''}" onclick="event.preventDefault(); navigateTo('/chat')">Chat</a>
-        <a href="/about" class="${appState.currentRoute === '/about' ? 'active' : ''}" onclick="event.preventDefault(); navigateTo('/about')">Acerca de</a>
+        <div class="nav-links">
+          <a href="/home" class="${appState.currentRoute === '/home' ? 'active' : ''}" onclick="event.preventDefault(); navigateTo('/home')">Inicio</a>
+          <a href="/chat" class="${appState.currentRoute === '/chat' ? 'active' : ''}" onclick="event.preventDefault(); navigateTo('/chat')">Chat</a>
+          <a href="/about" class="${appState.currentRoute === '/about' ? 'active' : ''}" onclick="event.preventDefault(); navigateTo('/about')">Acerca de</a>
+        </div>
+        <button class="dark-mode-toggle" onclick="toggleDarkMode()" title="Cambiar tema">${appState.darkMode ? '☀️' : '🌙'}</button>
       </nav>
     </header>
     <main>
@@ -229,7 +228,6 @@ async function sendMessage() {
   }
 
   appState.isLoading = false;
-  saveMessagesToLocalStorage(appState.messages);
   render();
   scrollToBottom();
 }
@@ -243,17 +241,30 @@ function scrollToBottom() {
   }, 0);
 }
 
-function clearHistory() {
-  if (confirm('¿Estás seguro de que deseas limpiar todo el historial de conversación?')) {
-    appState.messages = [];
-    clearMessagesFromLocalStorage();
-    render();
-  }
+function toggleDarkMode() {
+  appState.darkMode = !appState.darkMode;
+  saveDarkModePreference(appState.darkMode);
+  document.body.classList.toggle('dark-mode', appState.darkMode);
+  render();
+}
+
+function copyMessage(text) {
+  navigator.clipboard.writeText(text).then(() => {
+    // Toast simple: cambiar el icono temporalmente
+    const button = event.target;
+    button.textContent = '✅';
+    setTimeout(() => {
+      button.textContent = '📋';
+    }, 1500);
+  }).catch(err => {
+    console.error('Error al copiar:', err);
+  });
 }
 
 window.navigateTo = navigateTo;
 window.sendMessage = sendMessage;
-window.clearHistory = clearHistory;
+window.toggleDarkMode = toggleDarkMode;
+window.copyMessage = copyMessage;
 
 window.addEventListener('popstate', e => {
   const path = e.state?.path || '/home';
@@ -261,7 +272,9 @@ window.addEventListener('popstate', e => {
   render();
 });
 
-// Load chat history from localStorage on app start
-appState.messages = loadMessagesFromLocalStorage();
+// Apply dark mode on load
+if (appState.darkMode) {
+  document.body.classList.add('dark-mode');
+}
 
 render();
